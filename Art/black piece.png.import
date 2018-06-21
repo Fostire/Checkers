@@ -1,0 +1,32 @@
+[remap]
+
+importer="texture"
+type="StreamTexture"
+path="res://.import/black piece.png-8893b8889a2d5cb41fe893cbc04930ed.stex"
+
+[deps]
+
+source_file="res://Art/black piece.png"
+source_md5="d9843b6d6d661cd39b2657064bfb6d9b"
+
+dest_files=[ "res://.import/black piece.png-8893b8889a2d5cb41fe893cbc04930ed.stex" ]
+dest_md5="a28f9563b101326d28d8da297d607c47"
+
+[params]
+
+compress/mode=0
+compress/lossy_quality=0.7
+compress/hdr_mode=0
+compress/normal_map=0
+flags/repeat=0
+flags/filter=true
+flags/mipmaps=false
+flags/anisotropic=false
+flags/srgb=2
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/HDR_as_SRGB=false
+stream=false
+size_limit=0
+detect_3d=true
+svg/scale=1.0

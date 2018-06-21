@@ -1,0 +1,55 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Men.gd" type="Script" id=1]
+[ext_resource path="res://outline.shader" type="Shader" id=2]
+[ext_resource path="res://Art/pieces sprite sheet.png" type="Texture" id=3]
+
+[sub_resource type="ShaderMaterial" id=1]
+
+render_priority = 0
+shader = ExtResource( 2 )
+shader_param/outlineSize = 0.0
+shader_param/outlineColor = null
+_sections_unfolded = [ "Resource", "shader_param" ]
+
+[sub_resource type="RectangleShape2D" id=2]
+
+custom_solver_bias = 0.0
+extents = Vector2( 30, 28 )
+_sections_unfolded = [ "Resource" ]
+
+[node name="Men" type="Area2D"]
+
+scale = Vector2( 0.75, 0.75 )
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+audio_bus_override = false
+audio_bus_name = "Master"
+script = ExtResource( 1 )
+_sections_unfolded = [ "Material", "Pickable", "Transform", "Visibility", "Z Index" ]
+
+[node name="Sprite" type="Sprite" parent="." index="0"]
+
+light_mask = 0
+material = SubResource( 1 )
+texture = ExtResource( 3 )
+vframes = 2
+hframes = 2
+_sections_unfolded = [ "Animation", "Material", "Offset", "Transform", "Visibility", "Z Index" ]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="1"]
+
+visible = false
+shape = SubResource( 2 )
+_sections_unfolded = [ "Material", "Visibility", "Z Index" ]
+
+[connection signal="input_event" from="." to="." method="_on_Men_input_event"]
+
+[connection signal="mouse_entered" from="." to="." method="_on_Men_mouse_entered"]
+
+[connection signal="mouse_exited" from="." to="." method="_on_Men_mouse_exited"]
+
+
