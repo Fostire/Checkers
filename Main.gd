@@ -8,13 +8,14 @@ extends Node
 #		-HUD
 #			-start/restart game
 #			-track captured pieces
-#		-other visuals
+#		-other
 #			-visual cue if move is valid
+#			-sounds
 
 var menIsSelected = false
-var newPos
 var mousePosition
 var selectedMen
+var menInTile = 0
 var moveSuccess
 
 func _ready():
@@ -35,30 +36,39 @@ func _input(event):
 	but it does nothing without the menIsSelected flag 
 	"""
 	if (event.is_pressed() and event.button_index == BUTTON_LEFT):
-		mousePosition = get_viewport().get_mouse_position()
-		if menIsSelected:
-			newPos = $Board.map_to_world($Board.world_to_map(event.position - $Board.position)) + $Board.halfTile
-			# this finds the center of the tile where the mouse clicked
-			# event.position - $Board.position : finds where the mouse clicked in relation to the board
-			# then world_to_map finds which tile is there in the tilemap
-			# then map_to_world finds the global position of the upper left corner of the tile
-			# finally,  adding Board.halftile finds the center position of the tile
-			
-			moveSuccess = $Board.call_deferred("move_men", selectedMen, newPos)
-			selectedMen.deselect()
-		menIsSelected = false
-		
-	if (event.is_pressed() and event.button_index == BUTTON_RIGHT):
-		menIsSelected = false
-		selectedMen.deselect() #this only removes the outline on the selected piece
+		mousePosition = $Board.world_to_map(event.position - $Board.position)
+		menInTile = get_men(mousePosition)
 
-func on_select_men(selected):
-	#connected from men signal. selected is a reference to an instance of men
-	selectedMen = selected
-	menIsSelected = true
+		#click on a piece when no piece is selected
+		if not menIsSelected and typeof(menInTile) != typeof(0):
+			menIsSelected = true
+			selectedMen = menInTile
+
+		#click on an empty space when a piece is selected
+		elif menIsSelected and typeof(menInTile) == typeof(0):
+			moveSuccess = $Board.call_deferred("move_men", selectedMen, mousePosition)
+			selectedMen.deselect()
+			selectedMen = 0
+			menIsSelected = false
+
+	#deselect a piece on right click
+	if (event.is_pressed() and event.button_index == BUTTON_RIGHT):
+		if typeof(selectedMen) != typeof(0):
+			selectedMen.deselect() #this only removes the outline on the selected piece
+			selectedMen = 0
+		menIsSelected = false
+
 
 func new_game():
 	$Board.show()
 	
 func game_over():
 	$Board.hide()
+	
+func get_men(boardPosition):
+	if Rect2(Vector2(0,0), Vector2(8,8)).has_point(boardPosition):
+		return $Board.grid[boardPosition.x][boardPosition.y]
+	else:
+		return 0
+	
+	

@@ -18,7 +18,7 @@ custom_solver_bias = 0.0
 extents = Vector2( 30, 28 )
 _sections_unfolded = [ "Resource" ]
 
-[node name="Men" type="Area2D"]
+[node name="Men" type="Area2D" index="0"]
 
 scale = Vector2( 0.75, 0.75 )
 input_pickable = true
@@ -45,8 +45,6 @@ _sections_unfolded = [ "Animation", "Material", "Offset", "Transform", "Visibili
 visible = false
 shape = SubResource( 2 )
 _sections_unfolded = [ "Material", "Visibility", "Z Index" ]
-
-[connection signal="input_event" from="." to="." method="_on_Men_input_event"]
 
 [connection signal="mouse_entered" from="." to="." method="_on_Men_mouse_entered"]
 

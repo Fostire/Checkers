@@ -7,10 +7,6 @@ var mousePosition
 var selectedMen
 var menIsSelected = false
 var startPositions = []
-
-
-enum TILES {EMPTY, BLACK, WHITE, K_BLACK, K_WHITE} 
-
 var men = preload("res://Men.tscn")
 
 func _ready():
@@ -25,12 +21,12 @@ func _ready():
 		new_men.position = map_to_world(pos) + halfTile
 		if pos.y < 3:
 			new_men.blackSide = true
-			grid[pos.x][pos.y] = BLACK
+			grid[pos.x][pos.y] = new_men
 		elif pos.y > 4:
 			new_men.blackSide = false
-			grid[pos.x][pos.y] = WHITE
+			grid[pos.x][pos.y] = new_men
 		add_child(new_men)
-		new_men.connect("clicked", get_parent(), "on_select_men")
+#		new_men.connect("clicked", get_parent(), "on_select_men")
 
 func set_starting_pos():
 	for y in range (8):
@@ -43,9 +39,8 @@ func set_starting_pos():
 					startPositions.append(Vector2(x, y))
 
 
-func move_men(selected, newPos):
+func move_men(selected, newTile):
 	var currentTile = world_to_map(selected.position)
-	var newTile = world_to_map(newPos)
 	var success = false
 	var newX = int(newTile.x)
 	var newY = int(newTile.y)
@@ -56,6 +51,7 @@ func move_men(selected, newPos):
 	var skipY = oldY + (moveVector / 2).y
 
 
+	#check if it's in the board
 	if newX < 0 or newX > 7 or newY < 0 or newY > 7:
 		success = false
 	#check if it's a red square:
@@ -66,7 +62,7 @@ func move_men(selected, newPos):
 			# 1-tile move
 			# check if it's an empty square:
 			if grid[newX][newY] == 0:
-				selected.position = newPos
+				selected.position = map_to_world(newTile) + halfTile
 				grid[newX][newY] = grid[oldX][oldY]
 				grid[oldX][oldY] = 0
 				success = true
@@ -75,11 +71,12 @@ func move_men(selected, newPos):
 		elif moveVector.abs() == Vector2(2,2):
 			# 2-tile move
 			# check if it's a valid skip:
-			if grid[skipX][skipY] > 0 and grid[skipX][skipY] != grid[oldX][oldY]:
-				selected.position = newPos
-				grid[newX][newY] = grid[oldX][oldY]
-				grid[oldX][oldY] = 0
-				success = true
+			if typeof(grid[skipX][skipY]) != typeof(0): #skip position is not empty
+				if grid[skipX][skipY].blackSide != grid[oldX][oldY].blackSide:
+					selected.position = map_to_world(newTile) + halfTile
+					grid[newX][newY] = grid[oldX][oldY]
+					grid[oldX][oldY] = 0
+					success = true
 			else:
 				success = false
 		else:
