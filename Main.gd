@@ -72,3 +72,6 @@ func get_men(boardPosition):
 		return 0
 	
 	
+
+func _on_Reset_pressed():
+	$Board.reset_board()

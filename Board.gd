@@ -39,21 +39,16 @@ func set_up_board():
 		add_child(new_men)
 
 func clear_board():
-	var tile
+	for child in self.get_children():
+		if child.has_method("deselect"):
+			child.queue_free()
 	for x in range(8):
 		for y in range(8):
-			tile = grid[x][y]
-			if typeof(tile) != typeof(0):
-				tile.queue_free() #remove instance of men. ToDo see if I can reuse it instead of removing it and creating new ones
-				grid[x][y] = 0
-			else:
-				grid[x][y] = 0
+			grid[x][y] = 0
 
 func reset_board():
 	clear_board()
 	set_up_board()
-
-
 
 func move_men(selected, newTile):
 	var currentTile = world_to_map(selected.position)
