@@ -92,6 +92,8 @@ func move_men(selected, newTile):
 					selected.position = map_to_world(newTile) + halfTile
 					grid[newX][newY] = grid[oldX][oldY]
 					grid[oldX][oldY] = 0
+					grid[skipX][skipY].queue_free()
+					grid[skipX][skipY] = 0
 					success = true
 			else:
 				success = false
