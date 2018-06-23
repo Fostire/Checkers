@@ -7,10 +7,7 @@ path="res://.import/white piece.png-045716b259dc82131e6faa0de44553e3.stex"
 [deps]
 
 source_file="res://Art/white piece.png"
-source_md5="d5a1c86910cdf1e41624c53cce937612"
-
 dest_files=[ "res://.import/white piece.png-045716b259dc82131e6faa0de44553e3.stex" ]
-dest_md5="4684e30626c15a1fddc9fb18abb1b598"
 
 [params]
 

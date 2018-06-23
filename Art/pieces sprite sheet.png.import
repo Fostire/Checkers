@@ -7,10 +7,7 @@ path="res://.import/pieces sprite sheet.png-a71ff30b470cfdfd7303d0c53af9e695.ste
 [deps]
 
 source_file="res://Art/pieces sprite sheet.png"
-source_md5="7218590f7ebd488b3daf85b4d8afb958"
-
 dest_files=[ "res://.import/pieces sprite sheet.png-a71ff30b470cfdfd7303d0c53af9e695.stex" ]
-dest_md5="d2cae861047b3f762827932eaf481f35"
 
 [params]
 

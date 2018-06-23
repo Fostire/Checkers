@@ -10,12 +10,23 @@ var startPositions = []
 var men = preload("res://Men.tscn")
 
 func _ready():
-	set_starting_pos()
+	new_board()
+	set_up_board()
+
+func new_board():
 	for x in range(8):
 		grid.append([])
 		for y in range(8):
 			grid[x].append(0)
-	
+			if y in [3, 4]:
+				continue
+			else:
+				if y % 2 == 0 and x % 2 == 0:
+					startPositions.append(Vector2(x, y))
+				elif y % 2 != 0 and x % 2 != 0:
+					startPositions.append(Vector2(x, y))
+
+func set_up_board():
 	for pos in startPositions:
 		var new_men = men.instance()
 		new_men.position = map_to_world(pos) + halfTile
@@ -26,17 +37,22 @@ func _ready():
 			new_men.blackSide = false
 			grid[pos.x][pos.y] = new_men
 		add_child(new_men)
-#		new_men.connect("clicked", get_parent(), "on_select_men")
 
-func set_starting_pos():
-	for y in range (8):
-		if y in [3, 4]:
-			continue
-		for x in range (8):
-			if y % 2 == 0 and x % 2 == 0:
-					startPositions.append(Vector2(x, y))
-			elif y % 2 != 0 and x % 2 != 0:
-					startPositions.append(Vector2(x, y))
+func clear_board():
+	var tile
+	for x in range(8):
+		for y in range(8):
+			tile = grid[x][y]
+			if typeof(tile) != typeof(0):
+				tile.queue_free() #remove instance of men. ToDo see if I can reuse it instead of removing it and creating new ones
+				grid[x][y] = 0
+			else:
+				grid[x][y] = 0
+
+func reset_board():
+	clear_board()
+	set_up_board()
+
 
 
 func move_men(selected, newTile):

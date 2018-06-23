@@ -7,10 +7,7 @@ path="res://.import/Checkers pieces.svg-ce01e5ca44f60ad27bf56f6a7c4ed50c.stex"
 [deps]
 
 source_file="res://Art/Checkers pieces.svg"
-source_md5="0cc6b847befddbbd040c290c0170df25"
-
 dest_files=[ "res://.import/Checkers pieces.svg-ce01e5ca44f60ad27bf56f6a7c4ed50c.stex" ]
-dest_md5="c3c17bb1eb609137ba23f73f275d932e"
 
 [params]
 

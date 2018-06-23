@@ -7,10 +7,7 @@ path="res://.import/black king.png-bb41ab18b3968976efafa59576c8f52f.stex"
 [deps]
 
 source_file="res://Art/black king.png"
-source_md5="87bb75e2a41750de7b2e620e3bea3b46"
-
 dest_files=[ "res://.import/black king.png-bb41ab18b3968976efafa59576c8f52f.stex" ]
-dest_md5="c8316cfbda655fea326df39860947b90"
 
 [params]
 

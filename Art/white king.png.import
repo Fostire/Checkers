@@ -7,10 +7,7 @@ path="res://.import/white king.png-bb5002c6803d6cca59ac2b3c5347ab95.stex"
 [deps]
 
 source_file="res://Art/white king.png"
-source_md5="2cec07b0dca833b205a8f04fc5124797"
-
 dest_files=[ "res://.import/white king.png-bb5002c6803d6cca59ac2b3c5347ab95.stex" ]
-dest_md5="9e7d3e8ac4b5e547723faf728a57bf4c"
 
 [params]
 
