@@ -34,6 +34,8 @@ text = "Reset"
 flat = false
 align = 1
 
+[connection signal="moved" from="Board" to="." method="_on_men_moved"]
+
 [connection signal="pressed" from="Reset" to="." method="_on_Reset_pressed"]
 
 

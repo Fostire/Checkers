@@ -1,13 +1,10 @@
 extends Node
 
-#ToDo: 	-capturing pieces
-#			-moving after capturing
-#		-turns
-#		-kings
+#ToDo:	-kings
 #		-endgame
 #		-HUD
-#			-start/restart game
-#			-track captured pieces
+#			-start/restart game (temp reset button implemented)
+#			-track captured pieces / score
 #		-other
 #			-visual cue if move is valid
 #			-sounds
@@ -16,7 +13,11 @@ var menIsSelected = false
 var mousePosition
 var selectedMen
 var menInTile = 0
-var moveSuccess
+var moveSuccess = false
+var player_side = "white"
+var score_white = 0
+var score_black = 0
+var skipped = false
 
 func _ready():
 	pass
@@ -24,8 +25,13 @@ func _ready():
 func _process(delta):
 	if menIsSelected:
 		selectedMen.isSelected = true
-#	if moveSuccess:
-#		endturn()
+	if moveSuccess:
+		if player_side == "white":
+			player_side = "black"
+		else:
+			player_side = "white"
+		moveSuccess = false
+		$Board.canSkip = false
 
 
 func _input(event):
@@ -41,21 +47,35 @@ func _input(event):
 
 		#click on a piece when no piece is selected
 		if not menIsSelected and typeof(menInTile) != typeof(0):
-			menIsSelected = true
-			selectedMen = menInTile
+			if menInTile.side == player_side:
+				menIsSelected = true
+				selectedMen = menInTile
+			
+		# deselect piece when clicking on it again
+		elif menIsSelected and typeof(menInTile) != typeof(0):
+			selectedMen.deselect() 
+			selectedMen = 0
+			menIsSelected = false
+			if skipped:
+				moveSuccess = true
+				skipped = false
 
 		#click on an empty space when a piece is selected
 		elif menIsSelected and typeof(menInTile) == typeof(0):
-			moveSuccess = $Board.call_deferred("move_men", selectedMen, mousePosition)
-			selectedMen.deselect()
-			selectedMen = 0
-			menIsSelected = false
+			skipped = $Board.move_men(selectedMen, mousePosition)
+			if not skipped:
+				selectedMen.deselect()
+				selectedMen = 0
+				menIsSelected = false
 
 	#deselect a piece on right click
 	if (event.is_pressed() and event.button_index == BUTTON_RIGHT):
 		if typeof(selectedMen) != typeof(0):
 			selectedMen.deselect() #this only removes the outline on the selected piece
 			selectedMen = 0
+			if skipped:
+				moveSuccess = true
+				skipped = false
 		menIsSelected = false
 
 
@@ -70,8 +90,12 @@ func get_men(boardPosition):
 		return $Board.grid[boardPosition.x][boardPosition.y]
 	else:
 		return 0
-	
-	
+
 
 func _on_Reset_pressed():
+	score_white = 0
+	score_black = 0
 	$Board.reset_board()
+
+func _on_men_moved():
+	moveSuccess = true

@@ -1,8 +1,8 @@
 extends Node2D
 
+var side = "white"
 var blackSide = false; #false for white, true for black
 var king = false;
-signal clicked
 var location
 var isSelected = false
 
@@ -13,7 +13,7 @@ func _ready():
 	$Sprite.set_material(mat)
 	$Sprite.material.set_shader_param("outlineSize",0)
 	
-	if blackSide == true:
+	if side == "black":
 		$Sprite.frame = 0
 		$Sprite.material.set_shader_param("outlineColor",Color(0.6, 0.6, 0.9, 1.0))
 	else:
@@ -23,14 +23,14 @@ func _ready():
 func _process(delta):
 	if isSelected:
 		$Sprite.material.set_shader_param("outlineSize",0.013)
-		if not blackSide:
+		if side == "white":
 			$Sprite.material.set_shader_param("outlineSize",0.015)
 
 
 func _on_Men_mouse_entered():
 	if not isSelected:
 		$Sprite.material.set_shader_param("outlineSize",0.013)
-		if not blackSide:
+		if side == "white":
 			$Sprite.material.set_shader_param("outlineSize",0.015)
 
 
