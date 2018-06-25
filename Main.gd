@@ -1,20 +1,22 @@
 extends Node
 
-#ToDo:	-kings
+#ToDo:	-implement mandatory jumps rule
 #		-endgame
 #		-HUD
 #			-start/restart game (temp reset button implemented)
 #			-track captured pieces / score
+#			-track current side
 #		-other
 #			-visual cue if move is valid
 #			-sounds
+#			-add variant rules
 
 var menIsSelected = false
 var mousePosition
 var selectedMen
 var menInTile = 0
 var moveSuccess = false
-var player_side = "white"
+var player_side = global.starting_side
 var score_white = 0
 var score_black = 0
 var skipped = false
@@ -38,8 +40,7 @@ func _input(event):
 	""" 
 	When clicking on a board space attempt to move a selected piece there
 	Uses $Board.move_men to verify if the move is valid and to move the piece
-	Right clicking deselects a men. The piece is still stored in selectedMen
-	but it does nothing without the menIsSelected flag 
+	Right clicking deselects a men.
 	"""
 	if (event.is_pressed() and event.button_index == BUTTON_LEFT):
 		mousePosition = $Board.world_to_map(event.position - $Board.position)
@@ -63,6 +64,9 @@ func _input(event):
 		#click on an empty space when a piece is selected
 		elif menIsSelected and typeof(menInTile) == typeof(0):
 			skipped = $Board.move_men(selectedMen, mousePosition)
+			if mousePosition.y == 0 and selectedMen.side == "white" or mousePosition.y == 7 and selectedMen.side == "black":
+				selectedMen.king()
+				skipped = false
 			if not skipped:
 				selectedMen.deselect()
 				selectedMen = 0

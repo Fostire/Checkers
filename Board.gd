@@ -9,6 +9,7 @@ var menIsSelected = false
 var startPositions = []
 var men = preload("res://Men.tscn")
 var canSkip = false
+var canJumpBack = false
 signal moved
 
 func _ready():
@@ -67,6 +68,12 @@ func valid_skip(currentTile, moveVector):
 			if grid[skipX][skipY].side != grid[oldX][oldY].side:
 				valid = true
 	
+	if not grid[oldX][oldY].king and not global.captureBackwards and not canJumpBack:
+		if grid[oldX][oldY].side == "white" and newY > oldY:
+			valid = false
+		if grid[oldX][oldY].side == "black" and newY < oldY:
+			valid = false
+	
 	return valid
 
 func move_men(selected, newTile):
@@ -88,12 +95,22 @@ func move_men(selected, newTile):
 			#check how much it's moving:
 			if moveVector.abs() == Vector2(1,1) and not canSkip:
 				# 1-tile move
-				# check if it's an empty square:
-				if grid[newX][newY] == 0:
-					selected.position = map_to_world(newTile) + halfTile
-					grid[newX][newY] = grid[oldX][oldY]
-					grid[oldX][oldY] = 0
-					emit_signal("moved")
+				# check if it's king:
+				if selected.king:
+					# check if it's an empty square:
+					if grid[newX][newY] == 0:
+						selected.position = map_to_world(newTile) + halfTile
+						grid[newX][newY] = grid[oldX][oldY]
+						grid[oldX][oldY] = 0
+						emit_signal("moved")
+				# check if it's moving forward:
+				elif moveVector.y < 0 and selected.side == "white" or moveVector.y > 0 and selected.side == "black":
+					# check if it's an empty square:
+					if grid[newX][newY] == 0:
+						selected.position = map_to_world(newTile) + halfTile
+						grid[newX][newY] = grid[oldX][oldY]
+						grid[oldX][oldY] = 0
+						emit_signal("moved")
 	
 			elif moveVector.abs() == Vector2(2,2):
 				# 2-tile move
@@ -107,12 +124,13 @@ func move_men(selected, newTile):
 					grid[skipX][skipY] = 0
 					currentTile = newTile
 					canSkip = false
+					canJumpBack = true
 					for x in [-2, 2]:
 						for y in [-2, 2]:
 							if valid_skip(currentTile, Vector2(x, y)):
-								print("here")
 								canSkip = true
 					if not canSkip:
+						canJumpBack = false
 						emit_signal("moved")
 
 

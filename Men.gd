@@ -41,6 +41,13 @@ func _on_Men_mouse_exited():
 func deselect():
 	isSelected = false
 	$Sprite.material.set_shader_param("outlineSize",0)
+	
+func king():
+	king = true
+	if side == "black":
+		$Sprite.frame = 2
+	elif side == "white":
+		$Sprite.frame = 3
 
 
 

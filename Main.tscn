@@ -6,6 +6,7 @@
 [node name="Main" type="Node" index="0"]
 
 script = ExtResource( 1 )
+_sections_unfolded = [ "Pause" ]
 
 [node name="Board" parent="." index="0" instance=ExtResource( 2 )]
 
