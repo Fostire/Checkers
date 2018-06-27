@@ -2,6 +2,10 @@ extends Node
 
 #ToDo:	-implement mandatory jumps rule
 #		-endgame
+#			-check if player has pieces left
+#			-check if player can move
+#			-check for draw
+#			-add offer draw button
 #		-HUD
 #			-start/restart game (temp reset button implemented)
 #			-track captured pieces / score
@@ -20,8 +24,13 @@ var player_side = global.starting_side
 var score_white = 0
 var score_black = 0
 var skipped = false
+var boardSize
+var whiteHasMoves = true
+var blackHasMoves = true
+var forcedJump = false
 
 func _ready():
+	boardSize = $Board.boardSize
 	pass
 	
 func _process(delta):
@@ -34,6 +43,24 @@ func _process(delta):
 			player_side = "white"
 		moveSuccess = false
 		$Board.canSkip = false
+		
+		whiteHasMoves = false
+		blackHasMoves = false
+		forcedJump = false
+		for x in $Board.grid:
+			for tile in x:
+				if typeof(tile) != typeof(0):
+					if $Board.men_has_valid_moves(tile) and tile.side == "white":
+						whiteHasMoves = true
+					elif $Board.men_has_valid_moves(tile) and tile.side == "black":
+						blackHasMoves = true
+					if $Board.men_can_jump(tile) and tile.side == player_side:
+						tile.mustJump = true
+						forcedJump = true
+					else:
+						tile.mustJump = false
+						tile.deselect()
+	#check for winner/draw
 
 
 func _input(event):
@@ -49,8 +76,10 @@ func _input(event):
 		#click on a piece when no piece is selected
 		if not menIsSelected and typeof(menInTile) != typeof(0):
 			if menInTile.side == player_side:
-				menIsSelected = true
-				selectedMen = menInTile
+				if not forcedJump or menInTile.mustJump:
+					menIsSelected = true
+					selectedMen = menInTile
+					selectedMen.select()
 			
 		# deselect piece when clicking on it again
 		elif menIsSelected and typeof(menInTile) != typeof(0):
@@ -90,7 +119,7 @@ func game_over():
 	$Board.hide()
 	
 func get_men(boardPosition):
-	if Rect2(Vector2(0,0), Vector2(8,8)).has_point(boardPosition):
+	if Rect2(Vector2(0,0), Vector2(boardSize,boardSize)).has_point(boardPosition):
 		return $Board.grid[boardPosition.x][boardPosition.y]
 	else:
 		return 0

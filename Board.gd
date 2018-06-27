@@ -1,6 +1,6 @@
 extends TileMap
 
-
+var boardSize = 8
 var grid = []
 var halfTile = self.cell_size / 2
 var mousePosition
@@ -17,9 +17,10 @@ func _ready():
 	set_up_board()
 
 func new_board():
-	for x in range(8):
+	# for english checkers rules (8x8 board)
+	for x in range(boardSize):
 		grid.append([])
-		for y in range(8):
+		for y in range(boardSize):
 			grid[x].append(0)
 			if y in [3, 4]:
 				continue
@@ -30,6 +31,7 @@ func new_board():
 					startPositions.append(Vector2(x, y))
 
 func set_up_board():
+	# for english checkers rules (8x8 board)
 	for pos in startPositions:
 		var new_men = men.instance()
 		new_men.position = map_to_world(pos) + halfTile
@@ -45,13 +47,45 @@ func clear_board():
 	for child in self.get_children():
 		if child.has_method("deselect"):
 			child.queue_free()
-	for x in range(8):
-		for y in range(8):
+	for x in range(boardSize):
+		for y in range(boardSize):
 			grid[x][y] = 0
 
 func reset_board():
 	clear_board()
 	set_up_board()
+
+func men_has_valid_moves(menInTile):
+	var currentTile = world_to_map(menInTile.position)
+	var moveY = 1
+	var canMove = false
+	var newTile
+
+	for moveX in [-2, -1, 1, 2]:
+		if abs(moveX) == 1:
+			for moveY in [-1, 1]:
+				if menInTile.side == "white" and not menInTile.king and moveY == 1:
+					canMove = false
+				elif menInTile.side == "black" and not menInTile.king and moveY == -1:
+					canMove = false
+				else:
+					newTile = currentTile + Vector2(moveX, moveY)
+					if Rect2(Vector2(0,0), Vector2(boardSize,boardSize)).has_point(newTile):
+						if typeof(grid[newTile.x][newTile.y]) == typeof(0):
+							canMove = true
+		else:
+			for moveY in [-2, 2]:
+				canMove = valid_skip(currentTile, Vector2(moveX, moveY))
+	return canMove
+
+func men_can_jump(menInTile):
+	var currentTile = world_to_map(menInTile.position)
+	var canJump = false
+	for moveX in [-2, 2]:
+		for moveY in [-2, 2]:
+			if valid_skip(currentTile, Vector2(moveX, moveY)):
+				canJump = true
+	return canJump
 
 func valid_skip(currentTile, moveVector):
 	var oldX = currentTile.x
@@ -63,16 +97,19 @@ func valid_skip(currentTile, moveVector):
 	var newX = newTile.x
 	var newY = newTile.y
 	
-	if Rect2(Vector2(0,0), Vector2(8,8)).has_point(newTile):
-		if typeof(grid[newX][newY]) == typeof(0) and typeof(grid[skipX][skipY]) != typeof(0): #skip position is not empty
-			if grid[skipX][skipY].side != grid[oldX][oldY].side:
-				valid = true
-	
-	if not grid[oldX][oldY].king and not global.captureBackwards and not canJumpBack:
-		if grid[oldX][oldY].side == "white" and newY > oldY:
-			valid = false
-		if grid[oldX][oldY].side == "black" and newY < oldY:
-			valid = false
+	if moveVector.abs() == Vector2(2,2):
+		if Rect2(Vector2(0,0), Vector2(boardSize,boardSize)).has_point(newTile):
+			if typeof(grid[newX][newY]) == typeof(0) and typeof(grid[skipX][skipY]) != typeof(0): #skip position is not empty
+				if grid[skipX][skipY].side != grid[oldX][oldY].side:
+					valid = true
+		
+		if not grid[oldX][oldY].king and not global.captureBackwards and not canJumpBack:
+			if grid[oldX][oldY].side == "white" and newY > oldY:
+				valid = false
+			if grid[oldX][oldY].side == "black" and newY < oldY:
+				valid = false
+	else:
+		valid = false
 	
 	return valid
 
@@ -89,11 +126,11 @@ func move_men(selected, newTile):
 
 
 	#check if it's in the board
-	if Rect2(Vector2(0,0), Vector2(8,8)).has_point(newTile):
+	if Rect2(Vector2(0,0), Vector2(boardSize,boardSize)).has_point(newTile):
 		#check if it's a red square:
 		if (newY % 2 == 0 and newX % 2 == 0) or (newY % 2 != 0 and newX % 2 != 0):
 			#check how much it's moving:
-			if moveVector.abs() == Vector2(1,1) and not canSkip:
+			if moveVector.abs() == Vector2(1,1) and not canSkip and not selected.mustJump:
 				# 1-tile move
 				# check if it's king:
 				if selected.king:
