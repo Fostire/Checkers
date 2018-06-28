@@ -1,13 +1,13 @@
 extends Node
 
 #ToDo:	-endgame
-#			-check if player has pieces left
-#			-check if player can move
-#			-check for draw
+#			-check if player has pieces left (done)
+#			-check if player can move (done)
+#			-check for draw (done)
 #			-add offer draw button
 #		-HUD
 #			-start/restart game (temp reset button implemented)
-#			-track captured pieces / score
+#			-track captured pieces / score (done)
 #			-track current side
 #		-other
 #			-visual cue if move is valid
@@ -29,7 +29,6 @@ var blackHasMoves
 var forcedJump
 
 func _ready():
-	
 	menIsSelected = false
 	moveSuccess = false
 	skipped = false
@@ -72,10 +71,18 @@ func _process(delta):
 					else:
 						tile.mustJump = false
 						tile.deselect()
-		if not whiteHasMoves:
-			print("white loses")
-		if not blackHasMoves:
-			print("black loses")
+		if not whiteHasMoves and not blackHasMoves:
+			$Board.clear_board()
+			$HUD.show_message("Draw")
+			reset_game()
+		elif not whiteHasMoves:
+			$Board.clear_board()
+			$HUD.show_message("Black wins!")
+			reset_game()
+		elif not blackHasMoves:
+			$Board.clear_board()
+			$HUD.show_message("White wins!")
+			reset_game()
 
 
 func _input(event):
@@ -108,9 +115,11 @@ func _input(event):
 		#click on an empty space when a piece is selected
 		elif menIsSelected and typeof(menInTile) == typeof(0):
 			skipped = $Board.move_men(selectedMen, mousePosition)
-			if mousePosition.y == 0 and selectedMen.side == "white" or mousePosition.y == 7 and selectedMen.side == "black":
-				selectedMen.king()
-				skipped = false
+			if moveSuccess or skipped:
+				if mousePosition.y == 0 and selectedMen.side == "white" or mousePosition.y == 7 and selectedMen.side == "black":
+					selectedMen.king()
+					skipped = false
+					moveSuccess = true
 			if not skipped:
 				selectedMen.deselect()
 				selectedMen = 0

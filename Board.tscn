@@ -30,6 +30,6 @@ _sections_unfolded = [ "Cell", "Collision", "Occluder", "Transform", "Z Index" ]
 
 position = Vector2( 200, 200 )
 texture = ExtResource( 2 )
-_sections_unfolded = [ "Offset", "Transform" ]
+_sections_unfolded = [ "Material", "Offset", "Transform" ]
 
 
