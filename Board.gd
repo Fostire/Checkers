@@ -31,6 +31,8 @@ func new_board():
 					startPositions.append(Vector2(x, y))
 
 func set_up_board():
+	canSkip = false
+	canJumpBack = false
 	# for english checkers rules (8x8 board)
 	for pos in startPositions:
 		var new_men = men.instance()
@@ -64,10 +66,10 @@ func men_has_valid_moves(menInTile):
 	for moveX in [-2, -1, 1, 2]:
 		if abs(moveX) == 1:
 			for moveY in [-1, 1]:
-				if menInTile.side == "white" and not menInTile.king and moveY == 1:
-					canMove = false
-				elif menInTile.side == "black" and not menInTile.king and moveY == -1:
-					canMove = false
+				if moveY == 1 and menInTile.side == "white" and not menInTile.king:
+					continue
+				elif moveY == -1 and menInTile.side == "black" and not menInTile.king:
+					continue
 				else:
 					newTile = currentTile + Vector2(moveX, moveY)
 					if Rect2(Vector2(0,0), Vector2(boardSize,boardSize)).has_point(newTile):
@@ -75,7 +77,8 @@ func men_has_valid_moves(menInTile):
 							canMove = true
 		else:
 			for moveY in [-2, 2]:
-				canMove = valid_skip(currentTile, Vector2(moveX, moveY))
+				if valid_skip(currentTile, Vector2(moveX, moveY)):
+					canMove = true
 	return canMove
 
 func men_can_jump(menInTile):
@@ -159,6 +162,10 @@ func move_men(selected, newTile):
 					grid[oldX][oldY] = 0
 					grid[skipX][skipY].queue_free()
 					grid[skipX][skipY] = 0
+					if selected.side == "white":
+						self.get_parent().score_white += 1
+					if selected.side == "black":
+						self.get_parent().score_black += 1
 					currentTile = newTile
 					canSkip = false
 					canJumpBack = true

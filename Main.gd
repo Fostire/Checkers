@@ -1,7 +1,6 @@
 extends Node
 
-#ToDo:	-implement mandatory jumps rule
-#		-endgame
+#ToDo:	-endgame
 #			-check if player has pieces left
 #			-check if player can move
 #			-check for draw
@@ -15,28 +14,41 @@ extends Node
 #			-sounds
 #			-add variant rules
 
-var menIsSelected = false
+var menIsSelected
 var mousePosition
 var selectedMen
-var menInTile = 0
-var moveSuccess = false
-var player_side = global.starting_side
-var score_white = 0
-var score_black = 0
-var skipped = false
+var menInTile
+var moveSuccess
+var player_side
+var score_white
+var score_black
+var skipped
 var boardSize
-var whiteHasMoves = true
-var blackHasMoves = true
-var forcedJump = false
+var whiteHasMoves
+var blackHasMoves
+var forcedJump
 
 func _ready():
+	
+	menIsSelected = false
+	moveSuccess = false
+	skipped = false
+	whiteHasMoves = true
+	blackHasMoves = true
+	forcedJump = false
+	menInTile = 0
+	score_white = 0
+	score_black = 0
+	player_side = global.starting_side
 	boardSize = $Board.boardSize
-	pass
+	$HUD.update_score(score_white, score_black)
+
 	
 func _process(delta):
 	if menIsSelected:
 		selectedMen.isSelected = true
 	if moveSuccess:
+		$HUD.update_score(score_white, score_black)
 		if player_side == "white":
 			player_side = "black"
 		else:
@@ -60,7 +72,10 @@ func _process(delta):
 					else:
 						tile.mustJump = false
 						tile.deselect()
-	#check for winner/draw
+		if not whiteHasMoves:
+			print("white loses")
+		if not blackHasMoves:
+			print("black loses")
 
 
 func _input(event):
@@ -125,10 +140,23 @@ func get_men(boardPosition):
 		return 0
 
 
-func _on_Reset_pressed():
+func reset_game():
+	$Board.reset_board()
+	menIsSelected = false
+	moveSuccess = false
+	skipped = false
+	whiteHasMoves = true
+	blackHasMoves = true
+	forcedJump = false
+	menInTile = 0
 	score_white = 0
 	score_black = 0
-	$Board.reset_board()
+	$HUD.update_score(score_white, score_black)
+	player_side = global.starting_side
 
 func _on_men_moved():
 	moveSuccess = true
+
+
+func _on_HUD_reset_game():
+	reset_game()
