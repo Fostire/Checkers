@@ -5,25 +5,18 @@
 [ext_resource path="res://HUD.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Art/tabletop.jpg" type="Texture" id=4]
 
-[node name="Main" type="Node" index="0"]
-
+[node name="Main" type="Node"]
 script = ExtResource( 1 )
-_sections_unfolded = [ "Pause" ]
 
-[node name="Board" parent="." index="0" instance=ExtResource( 2 )]
+[node name="Board" parent="." instance=ExtResource( 2 )]
 
-[node name="HUD" parent="." index="1" instance=ExtResource( 3 )]
+[node name="HUD" parent="." instance=ExtResource( 3 )]
 
-[node name="Background" type="Sprite" parent="." index="2"]
-
+[node name="Background" type="Sprite" parent="."]
 position = Vector2( 480, 0 )
 rotation = 1.5708
 z_index = -1
 texture = ExtResource( 4 )
 centered = false
-
 [connection signal="moved" from="Board" to="." method="_on_men_moved"]
-
 [connection signal="reset_game" from="HUD" to="." method="_on_HUD_reset_game"]
-
-
